@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "701859352905",
+    "firebase_url": "https://smart-port-8ba03-default-rtdb.firebaseio.com",
+    "project_id": "smart-port-8ba03",
+    "storage_bucket": "smart-port-8ba03.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:701859352905:android:e1925d77e44c17c07d0a98",
+        "android_client_info": {
+          "package_name": "com.example.final_project_admin_website"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBEONen9O2LuSvaZtOgV5xSpvAWcFQN0DU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:701859352905:android:fa9e9abc1005c4887d0a98",
+        "android_client_info": {
+          "package_name": "com.example.final_project_customer_website"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBEONen9O2LuSvaZtOgV5xSpvAWcFQN0DU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
