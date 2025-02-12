@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:final_project_admin_website/constants/colors.dart';
 import 'package:final_project_admin_website/constants/text.dart';
 import 'package:final_project_admin_website/model/customer_model.dart';
@@ -146,7 +148,7 @@ class CustomerController extends GetxController {
                       textColor: Kcolor.background,
                       bgColor: Colors.green,
                       func: () async {
-                        await approveCustomer(customer.uid);
+                        await approveCustomer(customer);
                       }),
                   SizedBox(width: 20.w),
                   ElevBtn1(
@@ -198,11 +200,12 @@ class CustomerController extends GetxController {
     );
   }
 
-  Future<void> approveCustomer(String customerId) async {
+  Future<void> approveCustomer(CustomerModel customer) async {
     try {
       await customerssRef
-          .child(customerId)
+          .child(customer.uid)
           .update({'accountStatus': AccountStatus.active.name});
+      await sendEmail(customer.companyEmail, customer.companyName);
       Get.back(); // Close the dialog
       getxSnackbar(title: "Success", msg: "Customer Approved");
     } catch (e) {
@@ -243,6 +246,38 @@ class CustomerController extends GetxController {
       getxSnackbar(title: "Success", msg: "Customer activated");
     } catch (e) {
       getxSnackbar(title: "Error", msg: "Failed to activate customer: $e");
+    }
+  }
+
+  Future<void> sendEmail(String email, String name) async {
+    const String apiKey =
+        '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'; // Replace with your Brevo API Key
+    const String url =
+        'https://api.brevo.com/v3/smtp/email'; // Updated endpoint for direct email sending
+
+    final Map<String, dynamic> emailData = {
+      "sender": {"name": "Smart Port", "email": "mohamed.amin911911@gmail.com"},
+      "to": [
+        {"email": email, "name": name}
+      ],
+      "subject": "Account Approved",
+      "htmlContent":
+          "<p>Dear Customer, your account has been approved. Welcome to Smart Port!</p>"
+    };
+
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {
+        'api-key': apiKey,
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(emailData),
+    );
+
+    if (response.statusCode == 201) {
+      print('Email sent successfully: ${response.body}');
+    } else {
+      print('Error sending email: ${response.body}');
     }
   }
 }

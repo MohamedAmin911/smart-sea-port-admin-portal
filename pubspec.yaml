@@ -49,6 +49,8 @@ dependencies:
   cloud_firestore:
   shared_preferences:
   firebase_database:
+  cloud_functions:
+  mailer:
 
 dev_dependencies:
   flutter_test:
