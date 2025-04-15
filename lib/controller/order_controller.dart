@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_interpolation_to_compose_strings
+
 import 'package:final_project_admin_website/constants/colors.dart';
 import 'package:final_project_admin_website/constants/text.dart';
 import 'package:final_project_admin_website/model/order_model.dart';
@@ -74,6 +76,30 @@ class OrderController extends GetxController {
                 ShipmentDetailWidget(
                   shipmentDetail: shipment.shipmentStatus.name,
                   text: "Status",
+                ),
+              ],
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ShipmentDetailWidget(
+                  shipmentDetail: shipment.shipmentWeight.toString() + " kg",
+                  text: "Weight",
+                ),
+                SizedBox(height: 50.h),
+                ShipmentDetailWidget(
+                  shipmentDetail: shipment.shipmentSize["length"] + " cm",
+                  text: "length",
+                ),
+                SizedBox(height: 50.h),
+                ShipmentDetailWidget(
+                  shipmentDetail: shipment.shipmentSize["width"] + " cm",
+                  text: "width",
+                ),
+                SizedBox(height: 50.h),
+                ShipmentDetailWidget(
+                  shipmentDetail: shipment.shipmentSize["height"] + " cm",
+                  text: "height",
                 ),
               ],
             ),
