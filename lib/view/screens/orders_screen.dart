@@ -1,10 +1,11 @@
-// ignore_for_file: invalid_use_of_protected_member
+// ignore_for_file: invalid_use_of_protected_member, deprecated_member_use
 
 import 'package:final_project_admin_website/constants/colors.dart';
 import 'package:final_project_admin_website/constants/text.dart';
 import 'package:final_project_admin_website/controller/customers_controller.dart';
 import 'package:final_project_admin_website/controller/order_controller.dart';
-import 'package:final_project_admin_website/view/widgets/order_Screen_widgets/order_card_widget.dart';
+import 'package:final_project_admin_website/view/widgets/order_Screen_widgets/orders_listview_widget.dart';
+
 import 'package:final_project_admin_website/view/widgets/order_Screen_widgets/search_order_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -134,63 +135,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                               ),
                             ),
                           )
-                        : ListView.builder(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemCount: ordersController.orders.value.length,
-                            itemBuilder: (context, index) {
-                              return Obx(
-                                () => OrderCardWidget(
-                                  shipment:
-                                      ordersController.orders.value[index],
-                                  cost: ordersController
-                                      .orders.value[index].shippingCost
-                                      .toString(),
-                                  date: ordersController
-                                      .orders.value[index].submitedDate,
-                                  from: ordersController
-                                      .orders.value[index].senderAddress,
-                                  id: ordersController
-                                      .orders.value[index].shipmentId,
-                                  status: ordersController.orders.value[index]
-                                              .shipmentStatus.name ==
-                                          "waitingApproval"
-                                      ? "Waiting Approval"
-                                      : ordersController.orders.value[index]
-                                                  .shipmentStatus.name ==
-                                              "returned"
-                                          ? "Returned"
-                                          : ordersController.orders.value[index]
-                                                      .shipmentStatus.name ==
-                                                  "pending"
-                                              ? "Pending"
-                                              : ordersController
-                                                          .orders
-                                                          .value[index]
-                                                          .shipmentStatus
-                                                          .name ==
-                                                      "delivered"
-                                                  ? "Delivered"
-                                                  : ordersController
-                                                              .orders
-                                                              .value[index]
-                                                              .shipmentStatus
-                                                              .name ==
-                                                          "inTransit"
-                                                      ? "In Transit"
-                                                      : ordersController
-                                                                  .orders
-                                                                  .value[index]
-                                                                  .shipmentStatus
-                                                                  .name ==
-                                                              "waitingPickup"
-                                                          ? "Waiting Pickup"
-                                                          : "Cancelled",
-                                  to: ordersController
-                                      .orders[index].receiverAddress,
-                                ),
-                              );
-                            }),
+                        : const OrdersListView(),
                   ],
                 ),
               ),
