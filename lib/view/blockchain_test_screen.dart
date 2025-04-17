@@ -30,7 +30,7 @@ class ContainerData {
 // Function to fetch container data from the API
 Future<ContainerData?> fetchContainerData(String containerId) async {
   final url = Uri.parse(
-      'https://5f1f-197-54-66-87.ngrok-free.app/containers/$containerId');
+      'https://24d9f93b3f66a3a109c184c24b196d24.serveo.net/containers/$containerId');
   final headers = {
     'ngrok-skip-browser-warning': 'skip-browser-warning',
     'Content-Type': 'application/json',

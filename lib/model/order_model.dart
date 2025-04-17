@@ -28,6 +28,8 @@ class ShipmentModel {
   // final DateTime estimatedDeliveryDate;
   final double shippingCost;
   final bool isDelayed;
+  final String orderId;
+  final bool isPaid ;
 
   ShipmentModel({
     required this.submitedDate,
@@ -47,6 +49,8 @@ class ShipmentModel {
     // required this.estimatedDeliveryDate,
     this.shippingCost = 0,
     this.isDelayed = false,
+    this.isPaid = false,
+    this.orderId = "",
   });
 
   // Convert a Map object into a ShipmentModel object
@@ -72,6 +76,8 @@ class ShipmentModel {
       // estimatedDeliveryDate: DateTime.parse(json['estimatedDeliveryDate']),
       shippingCost: (json['shippingCost'] as num).toDouble(),
       isDelayed: json['isDelayed'] as bool? ?? false,
+      orderId: json['orderId'] as String? ?? "",
+      isPaid: json['isPaid'] as bool? ?? false,
     );
   }
   static Map<String, dynamic> _convertShipmentSize(dynamic sizeData) {
@@ -102,6 +108,8 @@ class ShipmentModel {
       // 'estimatedDeliveryDate': estimatedDeliveryDate.toIso8601String(),
       'shippingCost': shippingCost,
       'isDelayed': isDelayed,
+      'orderId': orderId,
+      'isPaid': isPaid,
     };
   }
 }
