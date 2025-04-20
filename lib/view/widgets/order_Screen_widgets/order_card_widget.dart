@@ -39,6 +39,7 @@ class _OrderCardWidgetState extends State<OrderCardWidget> {
       padding: EdgeInsets.only(bottom: 10.h),
       child: InkWell(
         onTap: () {
+          ordersController.fetchShipmentCosts(widget.shipment.shipmentId);
           ordersController.showShipmentDialog(widget.shipment);
         },
         borderRadius: BorderRadius.circular(22.r),
@@ -137,7 +138,7 @@ class _OrderCardWidgetState extends State<OrderCardWidget> {
                 width: 200.w,
                 child: Text(
                   maxLines: 1,
-                  widget.cost,
+                  "${widget.cost} EGP",
                   overflow: TextOverflow.ellipsis,
                   style: appStyle(
                       size: 18.sp,

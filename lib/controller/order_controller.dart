@@ -2,6 +2,7 @@
 
 import 'package:final_project_admin_website/constants/colors.dart';
 import 'package:final_project_admin_website/constants/text.dart';
+import 'package:final_project_admin_website/controller/estimate_costs_controller.dart';
 import 'package:final_project_admin_website/model/order_model.dart';
 import 'package:final_project_admin_website/view/widgets/common_widgets/elev_btn_1.dart';
 import 'package:final_project_admin_website/view/widgets/common_widgets/get-snackbar.dart';
@@ -12,12 +13,14 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 class OrderController extends GetxController {
+  final EstimateCostsController estimateCostsController =
+      Get.put(EstimateCostsController());
   final RxList<ShipmentModel> orders = <ShipmentModel>[].obs;
   var isLoading = false.obs;
   final DatabaseReference _shipmentRef =
       FirebaseDatabase.instance.ref().child('shipments');
 
-  // final CustomerController customerController = Get.put(CustomerController());
+  RxDouble shippingCost = 0.0.obs;
   @override
   void onInit() async {
     super.onInit();
@@ -36,6 +39,23 @@ class OrderController extends GetxController {
           updatedShipments.add(ShipmentModel.fromFirebase(shipmentData));
         });
         orders.value = updatedShipments;
+      }
+    });
+  }
+
+  Future<void> fetchShipmentCosts(String shipmentId) async {
+    _shipmentRef.child(shipmentId).onValue.listen((event) {
+      if (event.snapshot.exists) {
+        final data = event.snapshot.value as Map<dynamic, dynamic>?;
+        if (data != null) {
+          Map<String, dynamic> shipmentData = Map<String, dynamic>.from(data);
+          shippingCost.value =
+              ShipmentModel.fromFirebase(shipmentData).shippingCost;
+        } else {
+          print('Shipment data is null');
+        }
+      } else {
+        print('Shipment not found in the database.');
       }
     });
   }
@@ -64,7 +84,7 @@ class OrderController extends GetxController {
                 ),
                 SizedBox(height: 50.h),
                 ShipmentDetailWidget(
-                  shipmentDetail: shipment.senderName,
+                  shipmentDetail: shipment.receiverName,
                   text: "Customer",
                 ),
                 SizedBox(height: 50.h),
@@ -111,11 +131,39 @@ class OrderController extends GetxController {
                   text: "Destination",
                 ),
                 SizedBox(height: 50.h),
-                ShipmentDetailWidget(
-                  shipmentDetail: shipment.shippingCost.toString() == "0"
-                      ? "Waiting estimation"
-                      : shipment.shippingCost.toString(),
-                  text: "Costs",
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Obx(
+                      () => ShipmentDetailWidget(
+                        shipmentDetail: shipment.shippingCost.toString() == "0"
+                            ? "Waiting estimation"
+                            : (shippingCost.value).toString() + " EGP",
+                        text: "Costs",
+                      ),
+                    ),
+                    IconButton(
+                        padding: EdgeInsets.only(top: 38.h, left: 20.w),
+                        onPressed: () async {
+                          double cost = await estimateCostsController
+                              .estimateShipmentCost(
+                                  shipment.senderAddress, "Egypt");
+
+                          try {
+                            await _shipmentRef
+                                .child(shipment.shipmentId)
+                                .update({'shippingCost': cost});
+                          } catch (e) {
+                            rethrow;
+                          }
+
+                          await fetchShipmentCosts(shipment.shipmentId);
+                        },
+                        icon: const Icon(
+                          Icons.calculate_rounded,
+                          color: Kcolor.primary,
+                        )),
+                  ],
                 ),
               ],
             ),

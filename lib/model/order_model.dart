@@ -13,7 +13,7 @@ enum ShipmentStatus {
 class ShipmentModel {
   String shipmentId = "";
   final String senderId;
-  final String senderName;
+  final String receiverName;
   final String senderAddress;
   final String submitedDate;
   final String shipmentType;
@@ -29,13 +29,13 @@ class ShipmentModel {
   final double shippingCost;
   final bool isDelayed;
   final String orderId;
-  final bool isPaid ;
+  final bool isPaid;
 
   ShipmentModel({
     required this.submitedDate,
     this.shipmentId = "",
     required this.senderId,
-    required this.senderName,
+    required this.receiverName,
     required this.senderAddress,
     // required this.receiverId,
     // required this.receiverName,
@@ -60,7 +60,7 @@ class ShipmentModel {
       submitedDate: json['submitedDate'] as String,
       shipmentId: json['shipmentId'] as String,
       senderId: json['senderId'] as String,
-      senderName: json['senderName'] as String,
+      receiverName: json['receiverName'] as String,
       senderAddress: json['senderAddress'] as String,
       // receiverId: json['receiverId'] as String,
       // receiverName: json['receiverName'] as String,
@@ -94,7 +94,7 @@ class ShipmentModel {
       'submitedDate': submitedDate,
       'shipmentId': shipmentId,
       'senderId': senderId,
-      'senderName': senderName,
+      'receiverName': receiverName,
       'senderAddress': senderAddress,
       // 'receiverId': receiverId,
       // 'receiverName': receiverName,
