@@ -51,6 +51,7 @@ dependencies:
   firebase_database:
   cloud_functions:
   mailer:
+  intl:
 
 dev_dependencies:
   flutter_test:

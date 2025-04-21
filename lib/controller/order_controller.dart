@@ -3,7 +3,7 @@
 import 'package:final_project_admin_website/constants/colors.dart';
 import 'package:final_project_admin_website/constants/text.dart';
 import 'package:final_project_admin_website/controller/estimate_costs_controller.dart';
-import 'package:final_project_admin_website/model/order_model.dart';
+import 'package:final_project_admin_website/model/shipment_model.dart';
 import 'package:final_project_admin_website/view/widgets/common_widgets/elev_btn_1.dart';
 import 'package:final_project_admin_website/view/widgets/common_widgets/get-snackbar.dart';
 import 'package:final_project_admin_website/view/widgets/order_Screen_widgets/shipment_detail_widget.dart';
@@ -11,6 +11,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 class OrderController extends GetxController {
   final EstimateCostsController estimateCostsController =
@@ -21,6 +22,8 @@ class OrderController extends GetxController {
       FirebaseDatabase.instance.ref().child('shipments');
 
   RxDouble shippingCost = 0.0.obs;
+
+  RxString estimatedDate = "".obs;
   @override
   void onInit() async {
     super.onInit();
@@ -51,6 +54,23 @@ class OrderController extends GetxController {
           Map<String, dynamic> shipmentData = Map<String, dynamic>.from(data);
           shippingCost.value =
               ShipmentModel.fromFirebase(shipmentData).shippingCost;
+        } else {
+          print('Shipment data is null');
+        }
+      } else {
+        print('Shipment not found in the database.');
+      }
+    });
+  }
+
+  Future<void> fetchShipmentEstimatedDate(String shipmentId) async {
+    _shipmentRef.child(shipmentId).onValue.listen((event) {
+      if (event.snapshot.exists) {
+        final data = event.snapshot.value as Map<dynamic, dynamic>?;
+        if (data != null) {
+          Map<String, dynamic> shipmentData = Map<String, dynamic>.from(data);
+          estimatedDate.value =
+              ShipmentModel.fromFirebase(shipmentData).estimatedDeliveryDate;
         } else {
           print('Shipment data is null');
         }
@@ -145,9 +165,16 @@ class OrderController extends GetxController {
                     IconButton(
                         padding: EdgeInsets.only(top: 38.h, left: 20.w),
                         onPressed: () async {
-                          double cost = await estimateCostsController
+                          int cost = await estimateCostsController
                               .estimateShipmentCost(
-                                  shipment.senderAddress, "Egypt");
+                                  shipment.senderAddress, "Egypt",
+                                  height:
+                                      double.parse(
+                                          shipment.shipmentSize["height"]),
+                                  length: double.parse(
+                                      shipment.shipmentSize["length"]),
+                                  width: double.parse(
+                                      shipment.shipmentSize["width"]));
 
                           try {
                             await _shipmentRef
@@ -158,6 +185,42 @@ class OrderController extends GetxController {
                           }
 
                           await fetchShipmentCosts(shipment.shipmentId);
+                        },
+                        icon: const Icon(
+                          Icons.calculate_rounded,
+                          color: Kcolor.primary,
+                        )),
+                  ],
+                ),
+                SizedBox(height: 50.h),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Obx(
+                      () => ShipmentDetailWidget(
+                        shipmentDetail:
+                            shipment.estimatedDeliveryDate.toString() == ""
+                                ? "Waiting estimation"
+                                : (estimatedDate.value).toString(),
+                        text: "ETA",
+                      ),
+                    ),
+                    IconButton(
+                        padding: EdgeInsets.only(top: 38.h, left: 20.w),
+                        onPressed: () async {
+                          String date = DateFormat('yyyy-MM-dd').format(
+                              await estimateCostsController.estimateArrivalDate(
+                                  shipment.senderAddress, "Egypt"));
+
+                          try {
+                            await _shipmentRef
+                                .child(shipment.shipmentId)
+                                .update({'estimatedDeliveryDate': date});
+                          } catch (e) {
+                            rethrow;
+                          }
+
+                          await fetchShipmentEstimatedDate(shipment.shipmentId);
                         },
                         icon: const Icon(
                           Icons.calculate_rounded,

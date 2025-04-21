@@ -18,18 +18,16 @@ class ShipmentModel {
   final String submitedDate;
   final String shipmentType;
   final Map<String, dynamic> shipmentSize;
-  // final String receiverId;
-  // final String receiverName;
+
   final String receiverAddress;
   final ShipmentStatus shipmentStatus;
   final double shipmentWeight;
-  // final String trackingNumber;
-  // final DateTime shipmentDate;
-  // final DateTime estimatedDeliveryDate;
+
   final double shippingCost;
-  final bool isDelayed;
+
   final String orderId;
   final bool isPaid;
+  final String estimatedDeliveryDate;
 
   ShipmentModel({
     required this.submitedDate,
@@ -37,18 +35,13 @@ class ShipmentModel {
     required this.senderId,
     required this.receiverName,
     required this.senderAddress,
-    // required this.receiverId,
-    // required this.receiverName,
+    this.estimatedDeliveryDate = "",
     required this.receiverAddress,
     required this.shipmentType,
     required this.shipmentSize,
     required this.shipmentStatus,
     required this.shipmentWeight,
-    // required this.trackingNumber,
-    // required this.shipmentDate,
-    // required this.estimatedDeliveryDate,
     this.shippingCost = 0,
-    this.isDelayed = false,
     this.isPaid = false,
     this.orderId = "",
   });
@@ -62,22 +55,17 @@ class ShipmentModel {
       senderId: json['senderId'] as String,
       receiverName: json['receiverName'] as String,
       senderAddress: json['senderAddress'] as String,
-      // receiverId: json['receiverId'] as String,
-      // receiverName: json['receiverName'] as String,
       receiverAddress: json['receiverAddress'] as String,
       shipmentStatus: ShipmentStatus.values.firstWhere(
         (e) => e.toString().split('.').last == json['shipmentStatus'],
-        orElse: () => ShipmentStatus.waitingApproval, // Default if invalid
+        orElse: () => ShipmentStatus.waitingApproval,
       ),
       shipmentWeight: (json['shipmentWeight'] as num).toDouble(),
       shipmentSize: _convertShipmentSize(json['shipmentSize']),
-      // trackingNumber: json['trackingNumber'] as String,
-      // shipmentDate: DateTime.parse(json['shipmentDate']),
-      // estimatedDeliveryDate: DateTime.parse(json['estimatedDeliveryDate']),
       shippingCost: (json['shippingCost'] as num).toDouble(),
-      isDelayed: json['isDelayed'] as bool? ?? false,
       orderId: json['orderId'] as String? ?? "",
       isPaid: json['isPaid'] as bool? ?? false,
+      estimatedDeliveryDate: json['estimatedDeliveryDate'] as String? ?? "",
     );
   }
   static Map<String, dynamic> _convertShipmentSize(dynamic sizeData) {
@@ -96,20 +84,14 @@ class ShipmentModel {
       'senderId': senderId,
       'receiverName': receiverName,
       'senderAddress': senderAddress,
-      // 'receiverId': receiverId,
-      // 'receiverName': receiverName,
       'receiverAddress': receiverAddress,
-      'shipmentStatus':
-          shipmentStatus.toString().split('.').last, // Save as string
+      'shipmentStatus': shipmentStatus.toString().split('.').last,
       'shipmentWeight': shipmentWeight,
       'shipmentSize': shipmentSize,
-      // 'trackingNumber': trackingNumber,
-      // 'shipmentDate': shipmentDate.toIso8601String(),
-      // 'estimatedDeliveryDate': estimatedDeliveryDate.toIso8601String(),
       'shippingCost': shippingCost,
-      'isDelayed': isDelayed,
       'orderId': orderId,
       'isPaid': isPaid,
+      'estimatedDeliveryDate': estimatedDeliveryDate,
     };
   }
 }

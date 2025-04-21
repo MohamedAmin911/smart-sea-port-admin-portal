@@ -1,7 +1,7 @@
 // ignore_for_file: invalid_use_of_protected_member
 
 import 'package:final_project_admin_website/controller/order_controller.dart';
-import 'package:final_project_admin_website/model/order_model.dart';
+import 'package:final_project_admin_website/model/shipment_model.dart';
 import 'package:final_project_admin_website/view/widgets/order_Screen_widgets/order_card_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';

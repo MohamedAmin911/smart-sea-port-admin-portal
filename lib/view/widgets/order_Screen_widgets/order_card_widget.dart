@@ -1,7 +1,7 @@
 import 'package:final_project_admin_website/constants/colors.dart';
 import 'package:final_project_admin_website/constants/text.dart';
 import 'package:final_project_admin_website/controller/order_controller.dart';
-import 'package:final_project_admin_website/model/order_model.dart';
+import 'package:final_project_admin_website/model/shipment_model.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -38,8 +38,10 @@ class _OrderCardWidgetState extends State<OrderCardWidget> {
     return Padding(
       padding: EdgeInsets.only(bottom: 10.h),
       child: InkWell(
-        onTap: () {
-          ordersController.fetchShipmentCosts(widget.shipment.shipmentId);
+        onTap: () async {
+          await ordersController
+              .fetchShipmentEstimatedDate(widget.shipment.shipmentId);
+          await ordersController.fetchShipmentCosts(widget.shipment.shipmentId);
           ordersController.showShipmentDialog(widget.shipment);
         },
         borderRadius: BorderRadius.circular(22.r),
