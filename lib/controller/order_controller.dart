@@ -156,40 +156,37 @@ class OrderController extends GetxController {
                   children: [
                     Obx(
                       () => ShipmentDetailWidget(
-                        shipmentDetail: shipment.shippingCost.toString() == "0"
+                        shipmentDetail: shippingCost.value == 0
                             ? "Waiting estimation"
-                            : (shippingCost.value).toString() + " EGP",
+                            : "${shippingCost.value} EGP",
                         text: "Costs",
                       ),
                     ),
                     IconButton(
-                        padding: EdgeInsets.only(top: 38.h, left: 20.w),
-                        onPressed: () async {
-                          int cost = await estimateCostsController
-                              .estimateShipmentCost(
-                                  shipment.senderAddress, "Egypt",
-                                  height:
-                                      double.parse(
-                                          shipment.shipmentSize["height"]),
-                                  length: double.parse(
-                                      shipment.shipmentSize["length"]),
-                                  width: double.parse(
-                                      shipment.shipmentSize["width"]));
-
-                          try {
-                            await _shipmentRef
-                                .child(shipment.shipmentId)
-                                .update({'shippingCost': cost});
-                          } catch (e) {
-                            rethrow;
-                          }
-
+                      padding: EdgeInsets.only(top: 38.h, left: 20.w),
+                      onPressed: () async {
+                        int cost =
+                            await estimateCostsController.estimateShipmentCost(
+                          shipment.senderAddress,
+                          "Egypt",
+                          height: double.parse(shipment.shipmentSize["height"]),
+                          length: double.parse(shipment.shipmentSize["length"]),
+                          width: double.parse(shipment.shipmentSize["width"]),
+                        );
+                        try {
+                          await _shipmentRef
+                              .child(shipment.shipmentId)
+                              .update({'shippingCost': cost});
                           await fetchShipmentCosts(shipment.shipmentId);
-                        },
-                        icon: const Icon(
-                          Icons.calculate_rounded,
-                          color: Kcolor.primary,
-                        )),
+                        } catch (e) {
+                          rethrow;
+                        }
+                      },
+                      icon: const Icon(
+                        Icons.calculate_rounded,
+                        color: Kcolor.primary,
+                      ),
+                    ),
                   ],
                 ),
                 SizedBox(height: 50.h),
@@ -198,34 +195,35 @@ class OrderController extends GetxController {
                   children: [
                     Obx(
                       () => ShipmentDetailWidget(
-                        shipmentDetail:
-                            shipment.estimatedDeliveryDate.toString() == ""
-                                ? "Waiting estimation"
-                                : (estimatedDate.value).toString(),
+                        shipmentDetail: estimatedDate.value.isEmpty
+                            ? "Waiting estimation"
+                            : estimatedDate.value,
                         text: "ETA",
                       ),
                     ),
                     IconButton(
-                        padding: EdgeInsets.only(top: 38.h, left: 20.w),
-                        onPressed: () async {
-                          String date = DateFormat('yyyy-MM-dd').format(
-                              await estimateCostsController.estimateArrivalDate(
-                                  shipment.senderAddress, "Egypt"));
-
-                          try {
-                            await _shipmentRef
-                                .child(shipment.shipmentId)
-                                .update({'estimatedDeliveryDate': date});
-                          } catch (e) {
-                            rethrow;
-                          }
-
+                      padding: EdgeInsets.only(top: 38.h, left: 20.w),
+                      onPressed: () async {
+                        String date = DateFormat('yyyy-MM-dd').format(
+                          await estimateCostsController.estimateArrivalDate(
+                            shipment.senderAddress,
+                            "Egypt",
+                          ),
+                        );
+                        try {
+                          await _shipmentRef
+                              .child(shipment.shipmentId)
+                              .update({'estimatedDeliveryDate': date});
                           await fetchShipmentEstimatedDate(shipment.shipmentId);
-                        },
-                        icon: const Icon(
-                          Icons.calculate_rounded,
-                          color: Kcolor.primary,
-                        )),
+                        } catch (e) {
+                          rethrow;
+                        }
+                      },
+                      icon: const Icon(
+                        Icons.calculate_rounded,
+                        color: Kcolor.primary,
+                      ),
+                    ),
                   ],
                 ),
               ],
@@ -361,11 +359,11 @@ class OrderController extends GetxController {
                               )
                             ]
                           : shipment.shipmentStatus.name ==
-                                  ShipmentStatus.unLoading.name
+                                  ShipmentStatus.unLoaded.name
                               ? [
                                   Center(
                                     child: Text(
-                                      "Order Unloading",
+                                      "Order Unloaded",
                                       style: appStyle(
                                           size: 20.sp,
                                           color: Kcolor.background,

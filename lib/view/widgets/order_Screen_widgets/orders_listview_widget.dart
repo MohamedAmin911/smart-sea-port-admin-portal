@@ -32,36 +32,47 @@ class OrdersListView extends StatelessWidget {
                 date: ordersController.orders.value[index].submitedDate,
                 from: ordersController.orders.value[index].senderAddress,
                 id: ordersController.orders.value[index].shipmentId,
-                status: ordersController
-                            .orders.value[index].shipmentStatus.name ==
-                        ShipmentStatus.waitingApproval.name
-                    ? "Waiting Approval"
-                    : ordersController
-                                .orders.value[index].shipmentStatus.name ==
-                            ShipmentStatus.onHold.name
-                        ? "On Hold"
+                status:
+                    ordersController.orders.value[index].shipmentStatus.name ==
+                            ShipmentStatus.waitingApproval.name
+                        ? "Waiting Approval"
                         : ordersController
                                     .orders.value[index].shipmentStatus.name ==
-                                ShipmentStatus.cancelled.name
-                            ? "Cancelled"
+                                ShipmentStatus.onHold.name
+                            ? "On Hold"
                             : ordersController.orders.value[index]
                                         .shipmentStatus.name ==
-                                    ShipmentStatus.delivered.name
-                                ? "Delivered"
+                                    ShipmentStatus.cancelled.name
+                                ? "Cancelled"
                                 : ordersController.orders.value[index]
                                             .shipmentStatus.name ==
-                                        ShipmentStatus.unLoading.name
-                                    ? "Unloading"
+                                        ShipmentStatus.delivered.name
+                                    ? "Delivered"
                                     : ordersController.orders.value[index]
                                                 .shipmentStatus.name ==
-                                            ShipmentStatus.waitingPickup.name
-                                        ? "Waiting Pickup"
+                                            ShipmentStatus.unLoaded.name
+                                        ? "Unloaded"
                                         : ordersController.orders.value[index]
                                                     .shipmentStatus.name ==
-                                                ShipmentStatus
-                                                    .waitngPayment.name
-                                            ? "Waiting Payment"
-                                            : "In Transit",
+                                                ShipmentStatus.enteredPort.name
+                                            ? "Entered Port"
+                                            : ordersController
+                                                        .orders
+                                                        .value[index]
+                                                        .shipmentStatus
+                                                        .name ==
+                                                    ShipmentStatus
+                                                        .waitingPickup.name
+                                                ? "Waiting Pickup"
+                                                : ordersController
+                                                            .orders
+                                                            .value[index]
+                                                            .shipmentStatus
+                                                            .name ==
+                                                        ShipmentStatus
+                                                            .waitngPayment.name
+                                                    ? "Waiting Payment"
+                                                    : "In Transit",
                 to: ordersController.orders[index].receiverAddress,
               ),
             );

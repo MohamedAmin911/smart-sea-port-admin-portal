@@ -140,7 +140,9 @@ class _OrderCardWidgetState extends State<OrderCardWidget> {
                 width: 200.w,
                 child: Text(
                   maxLines: 1,
-                  "${widget.cost} EGP",
+                  widget.cost == "Waiting estimation"
+                      ? "Waiting estimation"
+                      : "${widget.cost} EGP",
                   overflow: TextOverflow.ellipsis,
                   style: appStyle(
                       size: 18.sp,
