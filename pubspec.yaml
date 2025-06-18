@@ -52,6 +52,11 @@ dependencies:
   cloud_functions:
   mailer:
   intl:
+  geocoding:
+  google_maps_flutter:
+  country_picker:
+  google_maps_webservice: 
+  pointer_interceptor: ^0.10.1+2
 
 dev_dependencies:
   flutter_test:

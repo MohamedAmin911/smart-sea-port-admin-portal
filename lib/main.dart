@@ -1,9 +1,6 @@
 import 'package:final_project_admin_website/constants/colors.dart';
 import 'package:final_project_admin_website/constants/text.dart';
-import 'package:final_project_admin_website/view/blockchain_test_screen.dart';
-import 'package:final_project_admin_website/view/screens/Auth_screens/login_screen.dart';
 import 'package:final_project_admin_website/view/screens/tabs_screen.dart';
-import 'package:final_project_admin_website/view/send_to_blockchain_test_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -56,7 +53,7 @@ class MyApp extends StatelessWidget {
               colorScheme: ColorScheme.fromSeed(seedColor: Kcolor.background),
               useMaterial3: false,
             ),
-            home: TabsScreen(),
+            home: const TabsScreen(),
             // PostContainerScreen(),
             // TestContainerDataUI(),
             // LogInScreen(),

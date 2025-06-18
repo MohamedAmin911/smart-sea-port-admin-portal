@@ -3,11 +3,9 @@ import 'package:final_project_admin_website/constants/icon-assets.dart';
 import 'package:final_project_admin_website/controller/customers_controller.dart';
 import 'package:final_project_admin_website/controller/order_controller.dart';
 import 'package:final_project_admin_website/view/screens/analytics-screen.dart';
-import 'package:final_project_admin_website/view/screens/dashboard-screen.dart';
+import 'package:final_project_admin_website/view/screens/dashboard_screen.dart';
 import 'package:final_project_admin_website/view/screens/orders_screen.dart';
-import 'package:final_project_admin_website/view/screens/security-screen.dart';
-import 'package:final_project_admin_website/view/screens/settings-screen.dart';
-import 'package:final_project_admin_website/view/screens/support-screen.dart';
+
 import 'package:final_project_admin_website/view/screens/users-screen.dart';
 import 'package:final_project_admin_website/view/widgets/tabs_screen_widgets/tab-bar-widget.dart';
 import 'package:flutter/material.dart';
@@ -36,22 +34,22 @@ class _TabsScreenState extends State<TabsScreen>
     const Tab(
       text: 'Orders',
     ),
-    const Tab(
-      text: 'Security',
-    ),
+    // const Tab(
+    //   text: 'Security',
+    // ),
     const Tab(
       text: 'Users',
     ),
-    const Tab(
-      text: 'Settings',
-    ),
-    const Tab(
-      text: 'Support',
-    ),
+    // const Tab(
+    //   text: 'Settings',
+    // ),
+    // const Tab(
+    //   text: 'Support',
+    // ),
   ];
   @override
   void initState() {
-    _tabController = TabController(length: 7, vsync: this);
+    _tabController = TabController(length: 4, vsync: this);
     super.initState();
   }
 
@@ -89,14 +87,14 @@ class _TabsScreenState extends State<TabsScreen>
       body: PageView(
         physics: const NeverScrollableScrollPhysics(),
         controller: controller,
-        children: const [
-          DashBoardScreen(),
-          AnalyticsScreen(),
-          OrdersScreen(),
-          SecurityScreen(),
-          UsersScreen(),
-          SettingsScreen(),
-          SupportScreen(),
+        children: [
+          DashboardScreen(),
+          const AnalyticsScreen(),
+          const OrdersScreen(),
+          // SecurityScreen(),
+          const UsersScreen(),
+          // SettingsScreen(),
+          // SupportScreen(),
         ],
       ),
     );

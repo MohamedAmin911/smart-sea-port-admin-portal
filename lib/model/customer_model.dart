@@ -32,22 +32,24 @@ class CustomerModel {
   // Convert a Map object into a User object
   factory CustomerModel.fromFirebase(Map<String, dynamic> json) {
     return CustomerModel(
-        uid: json['uid'] as String,
-        companyName: json['companyName'] as String,
-        companyAddress: json['companyAddress'] as String,
-        companyEmail: json['companyEmail'] as String,
-        companyPhoneNumber: json['companyPhoneNumber'] as String,
-        companyCity: json['companyCity'] as String,
-        companyRegistrationNumber: json['companyRegistrationNumber'] as String,
-        companyImportLicenseNumber:
-            json['companyImportLicenseNumber'] as String,
-        orders: json["orders"] != null
-            ? List<String>.from(json["orders"].map((x) => x))
-            : [], // If null, return an empty list
-        accountStatus: AccountStatus.values.firstWhere(
-          (e) => e.toString().split('.').last == json['accountStatus'],
-          orElse: () => AccountStatus.waitingApproval,
-        ));
+      uid: json['uid'] as String? ?? "",
+      companyName: json['companyName'] as String? ?? "",
+      companyAddress: json['companyAddress'] as String? ?? "",
+      companyEmail: json['companyEmail'] as String? ?? "",
+      companyPhoneNumber: json['companyPhoneNumber'] as String? ?? "",
+      companyCity: json['companyCity'] as String? ?? "",
+      companyRegistrationNumber:
+          json['companyRegistrationNumber'] as String? ?? "",
+      companyImportLicenseNumber:
+          json['companyImportLicenseNumber'] as String? ?? "",
+      orders: json["orders"] != null
+          ? List<String>.from(json["orders"].map((x) => x))
+          : [],
+      accountStatus: AccountStatus.values.firstWhere(
+        (e) => e.toString().split('.').last == json['accountStatus'],
+        orElse: () => AccountStatus.waitingApproval,
+      ),
+    );
   }
 
   Map<String, dynamic> toJson() {
