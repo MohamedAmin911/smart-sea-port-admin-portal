@@ -5,92 +5,102 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:final_project_admin_website/controller/map_controller.dart';
 
+import 'package:pointer_interceptor/pointer_interceptor.dart';
+
+/// A widget that displays a scrollable list of shipments when multiple
+/// markers are stacked at the same location on the map.
+/// It is wrapped in a PointerInterceptor to ensure the list items can be
+/// tapped when overlaid on the Google Map on web.
 class ClusteredItemsPanelWidget extends StatelessWidget {
   final List<ShipmentModel> shipments;
   final Function(String shipmentId) onShipmentTapped;
 
   const ClusteredItemsPanelWidget({
-    super.key,
+    Key? key,
     required this.shipments,
     required this.onShipmentTapped,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final AdminMapController controller = Get.find();
 
-    return Container(
-      width: 350,
-      height: 400, // Give it a fixed height to be scrollable
-      decoration: BoxDecoration(
-        color: Kcolor.background,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.3),
-            blurRadius: 10,
-            offset: const Offset(0, 5),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          // --- Panel Header ---
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            decoration: BoxDecoration(
-              color: Kcolor.primary.withOpacity(0.8),
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(12),
-                topRight: Radius.circular(12),
+    // This wrapper is essential for the list to be interactive on web.
+    return PointerInterceptor(
+      child: Container(
+        width: 350,
+        height: 400, // Fixed height allows the content to scroll
+        decoration: BoxDecoration(
+          color: Kcolor.background,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.3),
+              blurRadius: 10,
+              offset: const Offset(0, 5),
+            ),
+          ],
+        ),
+        child: Column(
+          children: [
+            // --- Panel Header ---
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: Kcolor.primary.withOpacity(0.8),
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(12),
+                  topRight: Radius.circular(12),
+                ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "${shipments.length} Shipments at this Location",
+                    style: appStyle(
+                        size: 16,
+                        color: Kcolor.background,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close, color: Kcolor.background),
+                    onPressed: () => controller.clearSelection(),
+                  ),
+                ],
               ),
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "${shipments.length} Shipments at this Location",
-                  style: appStyle(
-                      size: 16,
-                      color: Kcolor.background,
-                      fontWeight: FontWeight.bold),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.close, color: Kcolor.background),
-                  onPressed: () => controller.clearSelection(),
-                ),
-              ],
+            // --- Scrollable List ---
+            Expanded(
+              child: ListView.builder(
+                itemCount: shipments.length,
+                itemBuilder: (context, index) {
+                  final shipment = shipments[index];
+                  return ListTile(
+                    title: Text("ID: ${shipment.shipmentId}",
+                        style: appStyle(
+                            size: 14,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600)),
+                    subtitle: Text("Status: ${shipment.shipmentStatus.name}",
+                        style: appStyle(
+                            size: 12,
+                            color: Colors.grey.shade400,
+                            fontWeight: FontWeight.w500)),
+                    onTap: () => onShipmentTapped(shipment.shipmentId),
+                    leading: Icon(_getIconForStatus(shipment.shipmentStatus),
+                        color: Colors.white),
+                  );
+                },
+              ),
             ),
-          ),
-          // --- Scrollable List ---
-          Expanded(
-            child: ListView.builder(
-              itemCount: shipments.length,
-              itemBuilder: (context, index) {
-                final shipment = shipments[index];
-                return ListTile(
-                  title: Text("ID: ${shipment.shipmentId}",
-                      style: appStyle(
-                          size: 14,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600)),
-                  subtitle: Text("Status: ${shipment.shipmentStatus.name}",
-                      style: appStyle(
-                          size: 12,
-                          color: Colors.grey.shade400,
-                          fontWeight: FontWeight.w500)),
-                  onTap: () => onShipmentTapped(shipment.shipmentId),
-                  leading: Icon(_getIconForStatus(shipment.shipmentStatus),
-                      color: Colors.white),
-                );
-              },
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
+  /// Helper method to return an appropriate icon for each shipment status.
   IconData _getIconForStatus(ShipmentStatus status) {
     switch (status) {
       case ShipmentStatus.inTransit:
@@ -104,7 +114,7 @@ class ClusteredItemsPanelWidget extends StatelessWidget {
       case ShipmentStatus.waitingPickup:
         return Icons.person;
       default:
-        return Icons.help;
+        return Icons.help_outline;
     }
   }
 }

@@ -1,6 +1,5 @@
 // ignore_for_file: invalid_use_of_protected_member
 
-import 'package:final_project_admin_website/constants/colors.dart';
 import 'package:final_project_admin_website/constants/map_Style.dart';
 import 'package:final_project_admin_website/controller/map_controller.dart';
 import 'package:final_project_admin_website/view/widgets/dashboard_widgets/clustered_items_panel_widget.dart';
@@ -30,7 +29,7 @@ class DashboardScreen extends StatelessWidget {
             Container(
               margin: EdgeInsets.all(20.w),
               decoration: BoxDecoration(
-                border: Border.all(color: Kcolor.primary, width: 4.w),
+                border: Border.all(color: Colors.teal, width: 4.w),
                 borderRadius: BorderRadius.circular(22.r),
               ),
               child: ClipRRect(
@@ -43,49 +42,41 @@ class DashboardScreen extends StatelessWidget {
                     zoom: 12,
                   ),
                   markers: controller.markers.value,
-                  onTap: (_) {
-                    controller.clearSelection();
-                  },
+                  onTap: (_) => controller.clearSelection(),
                 ),
               ),
             ),
 
             // Search bar positioned at the top
             Positioned(
-              top: 40, // Adjusted for better placement within the border
+              top: 40,
               left: 40,
               right: 40,
               child: SearchBarWidget(),
             ),
 
-            // --- MODIFIED LOGIC FOR DISPLAYING PANELS ---
-
-            // Show the single details panel ONLY if one item is selected
-            // AND the cluster panel is not active.
-            if (controller.selectedShipment.value != null &&
-                controller.clusteredSelection.isEmpty)
-              Positioned(
-                top: 100,
-                right: 40,
-                child: DetailsPanelWidget(
-                  shipment: controller.selectedShipment.value!,
-                  customer: controller.selectedCustomer.value,
-                ),
-              ),
-
-            // Show the new cluster panel ONLY if a cluster is selected.
-            if (controller.clusteredSelection.isNotEmpty)
-              Positioned(
-                top: 100,
-                right: 40,
-                child: ClusteredItemsPanelWidget(
-                  shipments: controller.clusteredSelection.value,
-                  onShipmentTapped: (shipmentId) {
-                    // When an item is tapped from the list, select it
-                    controller.selectShipment(shipmentId);
-                  },
-                ),
-              ),
+            // This logic is correct and will now work because the panels can be clicked.
+            Positioned(
+              top: 100,
+              right: 40,
+              child: Obx(() {
+                if (controller.clusteredSelection.isNotEmpty) {
+                  return ClusteredItemsPanelWidget(
+                    shipments: controller.clusteredSelection,
+                    onShipmentTapped: (shipmentId) {
+                      controller.selectShipment(shipmentId);
+                    },
+                  );
+                } else if (controller.selectedShipment.value != null) {
+                  return DetailsPanelWidget(
+                    shipment: controller.selectedShipment.value!,
+                    customer: controller.selectedCustomer.value,
+                  );
+                } else {
+                  return const SizedBox.shrink();
+                }
+              }),
+            ),
           ],
         );
       }),
