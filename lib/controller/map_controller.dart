@@ -3,6 +3,7 @@
 import 'dart:async';
 import 'package:final_project_admin_website/model/customer_model.dart';
 import 'package:final_project_admin_website/model/shipment_model.dart';
+import 'package:final_project_admin_website/view/widgets/common_widgets/get-snackbar.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -23,15 +24,12 @@ class AdminMapController extends GetxController {
   Map<String, dynamic> _latestPositions = {};
 
   // --- CONFIGURATION ---
-  final List<ShipmentStatus> _displayableStatuses = const [
+  final List<ShipmentStatus> _inTransitStatuses = const [
     ShipmentStatus.inTransit,
-    ShipmentStatus.delivered,
-    ShipmentStatus.enteredPort,
-    ShipmentStatus.unLoaded,
-    ShipmentStatus.waitingPickup,
   ];
   BitmapDescriptor? shipIcon;
   BitmapDescriptor? portIcon;
+  static const LatLng portSaidLocation = LatLng(31.26, 32.30);
 
   // --- FIREBASE REFS ---
   final DatabaseReference _positionsRef =
@@ -50,7 +48,6 @@ class AdminMapController extends GetxController {
   Future<void> _initialize() async {
     isLoading.value = true;
     await _loadCustomIcons();
-    // NEW: Set up all listeners from the start.
     _listenToAllData();
     isLoading.value = false;
   }
@@ -70,82 +67,102 @@ class AdminMapController extends GetxController {
     }
   }
 
-  // --- REWRITTEN: This now sets up all real-time listeners ---
   void _listenToAllData() {
-    // 1. Listen to Shipments
     _shipmentsRef.onValue.listen((event) {
-      if (event.snapshot.exists) {
+      if (event.snapshot.exists && event.snapshot.value != null) {
         _allShipments = (event.snapshot.value as Map)
             .values
             .map((e) =>
                 ShipmentModel.fromFirebase(Map<String, dynamic>.from(e as Map)))
             .toList();
-        // Whenever shipments change, we must rebuild the markers
-        _buildMarkersFromState();
+      } else {
+        _allShipments = [];
       }
+      _buildMarkersFromState();
     });
 
-    // 2. Listen to Customers
     _customersRef.onValue.listen((event) {
-      if (event.snapshot.exists) {
+      if (event.snapshot.exists && event.snapshot.value != null) {
         _allCustomers = (event.snapshot.value as Map)
             .values
             .map((e) =>
                 CustomerModel.fromFirebase(Map<String, dynamic>.from(e as Map)))
             .toList();
-        // Customer data might affect panels, but doesn't require a full marker rebuild
+      } else {
+        _allCustomers = [];
       }
     });
 
-    // 3. Listen to Positions
     _positionsRef.onValue.listen((event) {
-      if (event.snapshot.exists) {
+      if (event.snapshot.exists && event.snapshot.value != null) {
         _latestPositions =
             Map<String, dynamic>.from(event.snapshot.value as Map);
-        // Whenever positions change, we must rebuild the markers
-        _buildMarkersFromState();
+      } else {
+        _latestPositions = {};
       }
+      _buildMarkersFromState();
     });
   }
 
-  // This method is now called by any listener that affects the map markers
   void _buildMarkersFromState() {
     final newMarkers = <Marker>{};
-    final shipmentsToShow = _allShipments
+
+    newMarkers.add(Marker(
+      markerId: const MarkerId('permanent_port_marker'),
+      position: portSaidLocation,
+      icon: portIcon ?? BitmapDescriptor.defaultMarker,
+      onTap: () {
+        handleMarkerTap(portSaidLocation);
+      },
+    ));
+
+    final inTransitShipments = _allShipments
         .where((s) =>
-            _displayableStatuses.contains(s.shipmentStatus) &&
+            _inTransitStatuses.contains(s.shipmentStatus) &&
             _latestPositions.containsKey(s.shipmentId))
         .toList();
 
-    var groupedByLocation = <LatLng, List<ShipmentModel>>{};
-    for (var shipment in shipmentsToShow) {
+    for (var shipment in inTransitShipments) {
       final posData = Map<String, dynamic>.from(
           _latestPositions[shipment.shipmentId] as Map);
       final location = LatLng(posData['latitude'], posData['longitude']);
 
-      if (groupedByLocation[location] == null) groupedByLocation[location] = [];
-      groupedByLocation[location]!.add(shipment);
-    }
-
-    groupedByLocation.forEach((location, shipmentsAtLocation) {
-      bool isCluster = shipmentsAtLocation.length > 1;
       newMarkers.add(
         Marker(
-          markerId: MarkerId(location.toString()),
+          markerId: MarkerId(shipment.shipmentId),
           position: location,
-          icon: isCluster
-              ? (portIcon ?? BitmapDescriptor.defaultMarker)
-              : (shipIcon ?? BitmapDescriptor.defaultMarker),
+          icon: shipIcon ?? BitmapDescriptor.defaultMarker,
           onTap: () {
             handleMarkerTap(location);
           },
         ),
       );
-    });
+    }
+
     markers.value = newMarkers;
   }
 
+  // --- CORRECTED LOGIC FOR HANDLING TAPS ---
   void handleMarkerTap(LatLng tappedLocation) {
+    // Case 1: The main Port Said marker was tapped
+    if (tappedLocation == portSaidLocation) {
+      // A shipment is considered "at the port" if its status is anything OTHER than inTransit.
+      final shipmentsAtPort = _allShipments
+          .where((s) => !_inTransitStatuses.contains(s.shipmentStatus))
+          .toList();
+
+      if (shipmentsAtPort.isNotEmpty) {
+        selectedShipment.value = null;
+        clusteredSelection.value = shipmentsAtPort;
+      } else {
+        Get.snackbar(
+            "Port Said", "No shipments currently at the port to display.",
+            snackPosition: SnackPosition.BOTTOM);
+      }
+      return;
+    }
+
+    // Case 2: An individual in-transit ship marker was tapped
     final itemsAtLocation = _allShipments.where((s) {
       if (_latestPositions.containsKey(s.shipmentId)) {
         final posData =
@@ -156,10 +173,7 @@ class AdminMapController extends GetxController {
       return false;
     }).toList();
 
-    if (itemsAtLocation.length > 1) {
-      selectedShipment.value = null;
-      clusteredSelection.value = itemsAtLocation;
-    } else if (itemsAtLocation.isNotEmpty) {
+    if (itemsAtLocation.isNotEmpty) {
       selectShipment(itemsAtLocation.first.shipmentId);
     }
   }
