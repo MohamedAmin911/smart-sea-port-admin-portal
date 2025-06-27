@@ -17,10 +17,12 @@ class AdminMapController extends GetxController {
   final Rx<CustomerModel?> selectedCustomer = Rx<CustomerModel?>(null);
   final RxList<ShipmentModel> clusteredSelection = <ShipmentModel>[].obs;
 
-  // --- DATA & CONFIGURATION ---
+  // --- REAL-TIME DATA HOLDERS ---
   List<ShipmentModel> _allShipments = [];
   List<CustomerModel> _allCustomers = [];
   Map<String, dynamic> _latestPositions = {};
+
+  // --- CONFIGURATION ---
   final List<ShipmentStatus> _displayableStatuses = const [
     ShipmentStatus.inTransit,
     ShipmentStatus.delivered,
@@ -48,8 +50,8 @@ class AdminMapController extends GetxController {
   Future<void> _initialize() async {
     isLoading.value = true;
     await _loadCustomIcons();
-    await _fetchAllData();
-    _listenToShipPositions();
+    // NEW: Set up all listeners from the start.
+    _listenToAllData();
     isLoading.value = false;
   }
 
@@ -68,35 +70,45 @@ class AdminMapController extends GetxController {
     }
   }
 
-  Future<void> _fetchAllData() async {
-    final shipmentSnapshot = await _shipmentsRef.get();
-    if (shipmentSnapshot.exists) {
-      _allShipments = (shipmentSnapshot.value as Map)
-          .values
-          .map((e) =>
-              ShipmentModel.fromFirebase(Map<String, dynamic>.from(e as Map)))
-          .toList();
-    }
-    final customerSnapshot = await _customersRef.get();
-    if (customerSnapshot.exists) {
-      _allCustomers = (customerSnapshot.value as Map)
-          .values
-          .map((e) =>
-              CustomerModel.fromFirebase(Map<String, dynamic>.from(e as Map)))
-          .toList();
-    }
-  }
+  // --- REWRITTEN: This now sets up all real-time listeners ---
+  void _listenToAllData() {
+    // 1. Listen to Shipments
+    _shipmentsRef.onValue.listen((event) {
+      if (event.snapshot.exists) {
+        _allShipments = (event.snapshot.value as Map)
+            .values
+            .map((e) =>
+                ShipmentModel.fromFirebase(Map<String, dynamic>.from(e as Map)))
+            .toList();
+        // Whenever shipments change, we must rebuild the markers
+        _buildMarkersFromState();
+      }
+    });
 
-  // --- REWRITTEN FOR CLEAN STATE ---
-  void _listenToShipPositions() {
+    // 2. Listen to Customers
+    _customersRef.onValue.listen((event) {
+      if (event.snapshot.exists) {
+        _allCustomers = (event.snapshot.value as Map)
+            .values
+            .map((e) =>
+                CustomerModel.fromFirebase(Map<String, dynamic>.from(e as Map)))
+            .toList();
+        // Customer data might affect panels, but doesn't require a full marker rebuild
+      }
+    });
+
+    // 3. Listen to Positions
     _positionsRef.onValue.listen((event) {
-      if (event.snapshot.value == null) return;
-      _latestPositions = Map<String, dynamic>.from(event.snapshot.value as Map);
-
-      _buildMarkersFromState();
+      if (event.snapshot.exists) {
+        _latestPositions =
+            Map<String, dynamic>.from(event.snapshot.value as Map);
+        // Whenever positions change, we must rebuild the markers
+        _buildMarkersFromState();
+      }
     });
   }
 
+  // This method is now called by any listener that affects the map markers
   void _buildMarkersFromState() {
     final newMarkers = <Marker>{};
     final shipmentsToShow = _allShipments
@@ -111,9 +123,7 @@ class AdminMapController extends GetxController {
           _latestPositions[shipment.shipmentId] as Map);
       final location = LatLng(posData['latitude'], posData['longitude']);
 
-      if (groupedByLocation[location] == null) {
-        groupedByLocation[location] = [];
-      }
+      if (groupedByLocation[location] == null) groupedByLocation[location] = [];
       groupedByLocation[location]!.add(shipment);
     }
 
@@ -127,7 +137,6 @@ class AdminMapController extends GetxController {
               ? (portIcon ?? BitmapDescriptor.defaultMarker)
               : (shipIcon ?? BitmapDescriptor.defaultMarker),
           onTap: () {
-            // The onTap closure is now extremely simple. It just calls a method with the location.
             handleMarkerTap(location);
           },
         ),
@@ -136,15 +145,13 @@ class AdminMapController extends GetxController {
     markers.value = newMarkers;
   }
 
-  // --- NEW DEDICATED METHOD FOR HANDLING TAPS ---
   void handleMarkerTap(LatLng tappedLocation) {
-    // This method ALWAYS uses the most current state from _latestPositions.
     final itemsAtLocation = _allShipments.where((s) {
       if (_latestPositions.containsKey(s.shipmentId)) {
         final posData =
             Map<String, dynamic>.from(_latestPositions[s.shipmentId] as Map);
-        final location = LatLng(posData['latitude'], posData['longitude']);
-        return location == tappedLocation;
+        return LatLng(posData['latitude'], posData['longitude']) ==
+            tappedLocation;
       }
       return false;
     }).toList();
