@@ -3,7 +3,6 @@
 import 'dart:async';
 import 'package:final_project_admin_website/model/customer_model.dart';
 import 'package:final_project_admin_website/model/shipment_model.dart';
-import 'package:final_project_admin_website/view/widgets/common_widgets/get-snackbar.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -192,8 +191,8 @@ class AdminMapController extends GetxController {
             Map<String, dynamic>.from(_latestPositions[shipmentId] as Map);
         final location = LatLng(posData['latitude'], posData['longitude']);
         if (mapController != null) {
-          mapController!
-              .animateCamera(CameraUpdate.newLatLngZoom(location, 14));
+          // mapController!
+          //     .animateCamera(CameraUpdate.newLatLngZoom(location, 14));
         }
       }
     }

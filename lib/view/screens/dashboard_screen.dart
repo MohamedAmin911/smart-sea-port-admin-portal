@@ -39,7 +39,7 @@ class DashboardScreen extends StatelessWidget {
                   onMapCreated: controller.onMapCreated,
                   initialCameraPosition: const CameraPosition(
                     target: LatLng(31.26, 32.30), // Port Said
-                    zoom: 12,
+                    zoom: 2.5,
                   ),
                   markers: controller.markers.value,
                   onTap: (_) => controller.clearSelection(),

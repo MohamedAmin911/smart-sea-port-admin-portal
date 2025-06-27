@@ -113,6 +113,8 @@ class ClusteredItemsPanelWidget extends StatelessWidget {
         return Icons.inventory_2;
       case ShipmentStatus.waitingPickup:
         return Icons.person;
+      case ShipmentStatus.cancelled:
+        return Icons.cancel;
       default:
         return Icons.help_outline;
     }
