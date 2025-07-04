@@ -89,7 +89,7 @@ class _TabsScreenState extends State<TabsScreen>
         controller: controller,
         children: [
           DashboardScreen(),
-          const AnalyticsScreen(),
+          AnalyticsScreen(),
           const OrdersScreen(),
           // SecurityScreen(),
           const UsersScreen(),

@@ -5,6 +5,7 @@ enum ShipmentStatus {
   cancelled,
   waitngPayment,
   inTransit,
+  checkPointA,
   delivered,
   enteredPort,
   unLoaded,
