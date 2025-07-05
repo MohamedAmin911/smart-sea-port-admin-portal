@@ -20,10 +20,17 @@ class OrderController extends GetxController {
   var isLoading = false.obs;
   final DatabaseReference _shipmentRef =
       FirebaseDatabase.instance.ref().child('shipments');
-
+  final TextEditingController containerId = TextEditingController();
   RxDouble shippingCost = 0.0.obs;
 
   RxString estimatedDate = "".obs;
+
+  @override
+  void onClose() {
+    super.onClose();
+    containerId.dispose();
+  }
+
   @override
   void onInit() async {
     super.onInit();
@@ -226,6 +233,45 @@ class OrderController extends GetxController {
                     ),
                   ],
                 ),
+                SizedBox(height: 50.h),
+                shipment.shipmentStatus.name !=
+                        ShipmentStatus.waitingApproval.name
+                    ? ShipmentDetailWidget(
+                        shipmentDetail: shipment.containerId,
+                        text: "Container ID",
+                      )
+                    : TextFormField(
+                        controller: containerId,
+                        decoration: InputDecoration(
+                          contentPadding: EdgeInsets.only(left: 20.w),
+                          floatingLabelBehavior: FloatingLabelBehavior.always,
+                          hintText: "container ID",
+                          hintStyle: appStyle(
+                              size: 15.sp,
+                              color: Kcolor.primary.withOpacity(0.2),
+                              fontWeight: FontWeight.w400),
+                          alignLabelWithHint: true,
+                          constraints: const BoxConstraints(
+                              minHeight: 50, maxWidth: 300),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(22),
+                            borderSide: const BorderSide(color: Kcolor.primary),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(22),
+                            borderSide: const BorderSide(color: Kcolor.primary),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(22),
+                            borderSide: const BorderSide(
+                                color: Kcolor.primary, width: 2),
+                          ),
+                        ),
+                        style: appStyle(
+                            size: 15.sp,
+                            color: Kcolor.primary,
+                            fontWeight: FontWeight.w500),
+                      )
               ],
             ),
             SizedBox(height: 50.h),
@@ -406,6 +452,15 @@ class OrderController extends GetxController {
       await _shipmentRef
           .child(shipmentId)
           .update({'shipmentStatus': ShipmentStatus.waitngPayment.name});
+      Get.back(); // Close the dialog
+      getxSnackbar(title: "Success", msg: "Shipment Approved");
+    } catch (e) {
+      getxSnackbar(title: "Error", msg: "Failed to approve shipment: $e");
+    }
+    try {
+      await _shipmentRef
+          .child(shipmentId)
+          .update({'containerId': containerId.text});
       Get.back(); // Close the dialog
       getxSnackbar(title: "Success", msg: "Shipment Approved");
     } catch (e) {

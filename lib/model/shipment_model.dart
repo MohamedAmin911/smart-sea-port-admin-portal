@@ -13,6 +13,7 @@ enum ShipmentStatus {
 }
 
 class ShipmentModel {
+  final String containerId;
   String shipmentId = "";
   final String senderId;
   final String receiverName;
@@ -35,6 +36,7 @@ class ShipmentModel {
   final String estimatedDeliveryDate;
 
   ShipmentModel({
+    this.containerId = "",
     required this.submitedDate,
     this.shipmentId = "",
     required this.senderId,
@@ -56,6 +58,7 @@ class ShipmentModel {
   // Convert a Map object into a ShipmentModel object
   factory ShipmentModel.fromFirebase(Map<String, dynamic> json) {
     return ShipmentModel(
+      containerId: json['containerId'] as String? ?? "",
       shipmentType: json['shipmentType'] as String? ?? "",
       submitedDate: json['submitedDate'] as String? ?? "",
       shipmentId: json['shipmentId'] as String? ?? "",
@@ -87,6 +90,7 @@ class ShipmentModel {
   // Convert a ShipmentModel object into a Map
   Map<String, dynamic> toJson() {
     return {
+      'containerId': containerId,
       'shipmentType': shipmentType,
       'submitedDate': submitedDate,
       'shipmentId': shipmentId,
