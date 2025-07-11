@@ -95,10 +95,10 @@ class AnalyticsScreen extends StatelessWidget {
           title: 'Shipment Status Distribution',
           child: _buildPieChart(controller.shipmentStatusDistribution),
         ),
-        ChartContainer(
-          title: 'Revenue Over Time',
-          child: _buildLineChart(controller.revenueOverTime),
-        ),
+        // ChartContainer(
+        //   title: 'Revenue Over Time',
+        //   child: _buildLineChart(controller.revenueOverTime),
+        // ),
         ChartContainer(
           title: 'Top Customers by Shipments',
           child: _buildBarChart(controller.topCustomersByShipments),

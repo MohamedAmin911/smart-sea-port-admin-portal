@@ -26,7 +26,7 @@ class _TabsScreenState extends State<TabsScreen>
   late TabController _tabController;
   final _tabs = [
     const Tab(
-      text: 'Dashboard',
+      text: 'Tracking',
     ),
     const Tab(
       text: 'Analytics',
