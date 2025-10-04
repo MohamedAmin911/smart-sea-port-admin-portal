@@ -1,16 +1,11 @@
 # final_project_admin_website
+![1](assets/png/a1.png)
+![2](assets/png/a2.png)
+![3](assets/png/a3.png)
+![4](assets/png/a4.png)
+![5](assets/png/a5.png)
+![6](assets/png/a6.png)
+![7](assets/png/a7.png)
+![8](assets/png/a8.png)
+![9](assets/png/a9.png)
 
-A new Flutter project.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
