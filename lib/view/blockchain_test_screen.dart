@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-// Model class to represent the container data
 class ContainerData {
   final String id;
   final String status;
@@ -16,7 +15,6 @@ class ContainerData {
     required this.history,
   });
 
-  // Factory constructor to create an instance from JSON
   factory ContainerData.fromJson(Map<String, dynamic> json) {
     return ContainerData(
       id: json['ID'],
@@ -27,7 +25,6 @@ class ContainerData {
   }
 }
 
-// Function to fetch container data from the API
 Future<ContainerData?> fetchContainerData(String containerId) async {
   final url = Uri.parse(
       'https://24d9f93b3f66a3a109c184c24b196d24.serveo.net/containers/$containerId');
@@ -60,7 +57,6 @@ Future<ContainerData?> fetchContainerData(String containerId) async {
   return null;
 }
 
-// UI to test fetching container data
 class TestContainerDataUI extends StatefulWidget {
   @override
   _TestContainerDataUIState createState() => _TestContainerDataUIState();

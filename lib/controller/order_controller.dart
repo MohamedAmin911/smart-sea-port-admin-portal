@@ -37,7 +37,6 @@ class OrderController extends GetxController {
     await fetchAllShipments();
   }
 
-  // Fetch all shipments
   Future<void> fetchAllShipments() async {
     _shipmentRef.onValue.listen((event) {
       final List<ShipmentModel> updatedShipments = [];
@@ -452,7 +451,7 @@ class OrderController extends GetxController {
       await _shipmentRef
           .child(shipmentId)
           .update({'shipmentStatus': ShipmentStatus.waitngPayment.name});
-      Get.back(); // Close the dialog
+      Get.back();
       getxSnackbar(title: "Success", msg: "Shipment Approved");
     } catch (e) {
       getxSnackbar(title: "Error", msg: "Failed to approve shipment: $e");
@@ -461,7 +460,7 @@ class OrderController extends GetxController {
       await _shipmentRef
           .child(shipmentId)
           .update({'containerId': containerId.text});
-      Get.back(); // Close the dialog
+      Get.back();
       getxSnackbar(title: "Success", msg: "Shipment Approved");
     } catch (e) {
       getxSnackbar(title: "Error", msg: "Failed to approve shipment: $e");
@@ -473,7 +472,7 @@ class OrderController extends GetxController {
       await _shipmentRef
           .child(shipmentId)
           .update({'shipmentStatus': ShipmentStatus.onHold.name});
-      Get.back(); // Close the dialog
+      Get.back();
       getxSnackbar(title: "Success", msg: "Shipment is on hold");
     } catch (e) {
       getxSnackbar(
@@ -486,7 +485,7 @@ class OrderController extends GetxController {
       await _shipmentRef
           .child(shipmentId)
           .update({'shipmentStatus': ShipmentStatus.cancelled.name});
-      Get.back(); // Close the dialog
+      Get.back();
       getxSnackbar(title: "Success", msg: "Shipment Cancelled");
     } catch (e) {
       getxSnackbar(title: "Error", msg: "Failed to cancel shipment: $e");

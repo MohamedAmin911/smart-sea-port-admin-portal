@@ -7,10 +7,6 @@ import 'package:final_project_admin_website/controller/map_controller.dart';
 
 import 'package:pointer_interceptor/pointer_interceptor.dart';
 
-/// A widget that displays a scrollable list of shipments when multiple
-/// markers are stacked at the same location on the map.
-/// It is wrapped in a PointerInterceptor to ensure the list items can be
-/// tapped when overlaid on the Google Map on web.
 class ClusteredItemsPanelWidget extends StatelessWidget {
   final List<ShipmentModel> shipments;
   final Function(String shipmentId) onShipmentTapped;
@@ -25,11 +21,10 @@ class ClusteredItemsPanelWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final AdminMapController controller = Get.find();
 
-    // This wrapper is essential for the list to be interactive on web.
     return PointerInterceptor(
       child: Container(
         width: 350,
-        height: 400, // Fixed height allows the content to scroll
+        height: 400,
         decoration: BoxDecoration(
           color: Kcolor.background,
           borderRadius: BorderRadius.circular(12),
@@ -43,7 +38,7 @@ class ClusteredItemsPanelWidget extends StatelessWidget {
         ),
         child: Column(
           children: [
-            // --- Panel Header ---
+            //Panel Header
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
@@ -100,7 +95,6 @@ class ClusteredItemsPanelWidget extends StatelessWidget {
     );
   }
 
-  /// Helper method to return an appropriate icon for each shipment status.
   IconData _getIconForStatus(ShipmentStatus status) {
     switch (status) {
       case ShipmentStatus.inTransit:

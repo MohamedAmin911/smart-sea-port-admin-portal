@@ -34,18 +34,9 @@ class _TabsScreenState extends State<TabsScreen>
     const Tab(
       text: 'Orders',
     ),
-    // const Tab(
-    //   text: 'Security',
-    // ),
     const Tab(
       text: 'Users',
     ),
-    // const Tab(
-    //   text: 'Settings',
-    // ),
-    // const Tab(
-    //   text: 'Support',
-    // ),
   ];
   @override
   void initState() {
@@ -91,10 +82,7 @@ class _TabsScreenState extends State<TabsScreen>
           DashboardScreen(),
           AnalyticsScreen(),
           const OrdersScreen(),
-          // SecurityScreen(),
           const UsersScreen(),
-          // SettingsScreen(),
-          // SupportScreen(),
         ],
       ),
     );

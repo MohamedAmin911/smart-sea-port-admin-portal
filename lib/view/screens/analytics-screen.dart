@@ -28,11 +28,11 @@ class AnalyticsScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // --- KPI CARDS SECTION ---
+              //KPI CARDS SECTION
               _buildKpiCards(),
               SizedBox(height: 30.h),
 
-              // --- CHARTS SECTION ---
+              //CHARTS SECTION
               _buildChartsGrid(context),
             ],
           ),
@@ -79,7 +79,6 @@ class AnalyticsScreen extends StatelessWidget {
   }
 
   Widget _buildChartsGrid(BuildContext context) {
-    // Determine number of columns based on screen width for responsiveness
     final double screenWidth = MediaQuery.of(context).size.width;
     final int crossAxisCount = screenWidth < 1200 ? 1 : 2;
 
@@ -89,16 +88,12 @@ class AnalyticsScreen extends StatelessWidget {
       physics: const NeverScrollableScrollPhysics(),
       crossAxisSpacing: 20.w,
       mainAxisSpacing: 20.h,
-      childAspectRatio: 1.8, // Adjust aspect ratio for better look
+      childAspectRatio: 1.8,
       children: [
         ChartContainer(
           title: 'Shipment Status Distribution',
           child: _buildPieChart(controller.shipmentStatusDistribution),
         ),
-        // ChartContainer(
-        //   title: 'Revenue Over Time',
-        //   child: _buildLineChart(controller.revenueOverTime),
-        // ),
         ChartContainer(
           title: 'Top Customers by Shipments',
           child: _buildBarChart(controller.topCustomersByShipments),
@@ -111,7 +106,6 @@ class AnalyticsScreen extends StatelessWidget {
     );
   }
 
-  // Chart building methods
   Widget _buildPieChart(Map<String, double> data) {
     if (data.isEmpty) return const Center(child: Text("No data available"));
     return PieChart(
@@ -150,40 +144,7 @@ class AnalyticsScreen extends StatelessWidget {
           );
         }).toList(),
         sectionsSpace: 2,
-        centerSpaceRadius: 60, // Larger radius for a donut hole
-      ),
-    );
-  }
-
-  Widget _buildLineChart(List<FlSpot> spots) {
-    if (spots.isEmpty) return const Center(child: Text("No data available"));
-    return LineChart(
-      LineChartData(
-        gridData: FlGridData(show: false),
-        titlesData: FlTitlesData(
-          bottomTitles: AxisTitles(
-              sideTitles: SideTitles(
-                  showTitles: true,
-                  reservedSize: 30,
-                  getTitlesWidget: (value, meta) => Text(
-                      DateFormat('MMM').format(DateTime(0, value.toInt())),
-                      style:
-                          const TextStyle(color: Colors.grey, fontSize: 12)))),
-          leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-        ),
-        borderData: FlBorderData(show: false),
-        lineBarsData: [
-          LineChartBarData(
-            spots: spots,
-            isCurved: true,
-            color: Colors.teal,
-            barWidth: 4,
-            belowBarData:
-                BarAreaData(show: true, color: Colors.teal.withOpacity(0.3)),
-          ),
-        ],
+        centerSpaceRadius: 60,
       ),
     );
   }

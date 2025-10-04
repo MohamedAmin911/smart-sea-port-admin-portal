@@ -63,8 +63,7 @@ class StyledFormField extends StatelessWidget {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(22.r),
-            borderSide: const BorderSide(
-                color: Kcolor.primary, width: 2), // Thicker border on focus
+            borderSide: const BorderSide(color: Kcolor.primary, width: 2),
           ),
           errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(22.r),

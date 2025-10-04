@@ -1,4 +1,3 @@
-// Enum for shipment status
 enum ShipmentStatus {
   waitingApproval,
   onHold,
@@ -55,7 +54,6 @@ class ShipmentModel {
     this.ContainerStoredTrigger = 0,
   });
 
-  // Convert a Map object into a ShipmentModel object
   factory ShipmentModel.fromFirebase(Map<String, dynamic> json) {
     return ShipmentModel(
       containerId: json['containerId'] as String? ?? "",
@@ -84,10 +82,9 @@ class ShipmentModel {
     if (sizeData is Map) {
       return Map<String, dynamic>.from(sizeData);
     }
-    return {}; // Return empty map if conversion fails
+    return {};
   }
 
-  // Convert a ShipmentModel object into a Map
   Map<String, dynamic> toJson() {
     return {
       'containerId': containerId,

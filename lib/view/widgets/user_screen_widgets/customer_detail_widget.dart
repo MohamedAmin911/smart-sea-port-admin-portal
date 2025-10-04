@@ -19,7 +19,6 @@ class CustomerDetailWidget extends StatelessWidget {
       children: [
         Container(
           padding: EdgeInsets.symmetric(horizontal: 10.w),
-          // width: 70.w,
           height: 30.h,
           decoration: BoxDecoration(
             color: Kcolor.primary,

@@ -4,12 +4,9 @@ import 'package:final_project_admin_website/model/shipment_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pointer_interceptor/pointer_interceptor.dart';
-import 'package:final_project_admin_website/constants/colors.dart'; // Ensure you have this file
-import 'package:final_project_admin_website/constants/text.dart'; // Ensure you have this file
+import 'package:final_project_admin_website/constants/colors.dart';
+import 'package:final_project_admin_website/constants/text.dart';
 
-/// A widget to display the detailed information of a single, selected shipment.
-/// It is wrapped in a PointerInterceptor to ensure it can receive clicks
-/// when overlaid on the Google Map in a web environment.
 class DetailsPanelWidget extends StatelessWidget {
   final ShipmentModel shipment;
   final CustomerModel? customer;
@@ -24,7 +21,6 @@ class DetailsPanelWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final AdminMapController controller = Get.find();
 
-    // The PointerInterceptor is essential for this widget to be interactive on web.
     return PointerInterceptor(
       child: Container(
         width: 350,
@@ -43,7 +39,7 @@ class DetailsPanelWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            // --- Panel Header ---
+            //Panel Header
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
@@ -72,7 +68,7 @@ class DetailsPanelWidget extends StatelessWidget {
                 ],
               ),
             ),
-            // --- Content ---
+            //Content
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
@@ -95,7 +91,6 @@ class DetailsPanelWidget extends StatelessWidget {
     );
   }
 
-  /// Helper widget to create a consistently formatted row for details.
   Widget _buildDetailRow(String label, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6.0),
